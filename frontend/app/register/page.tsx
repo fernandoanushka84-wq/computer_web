@@ -2,20 +2,30 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL, setToken } from "../../lib/api";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [form, setForm] = useState({ name: "", email: "", password: "", phone: "", address: "" });
+  const [error, setError] = useState("");
 
   const register = async () => {
-    const response = await fetch("http://localhost:8000/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    const data = await response.json();
-    localStorage.setItem("token", data.access_token);
-    router.push("/shop");
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!response.ok) {
+        const body = await response.json();
+        throw new Error(body.detail || "Unable to register");
+      }
+      const data = await response.json();
+      setToken(data.access_token);
+      router.push("/shop");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Register failed");
+    }
   };
 
   return (

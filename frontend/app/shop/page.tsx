@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { API_BASE_URL } from "../../lib/api";
 
 interface Product {
   id: number;
@@ -15,15 +16,33 @@ export default function ShopPage() {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/products")
+    fetch(`${API_BASE_URL}/products`)
       .then((res) => res.json())
       .then((data) => setProducts(data));
   }, []);
 
   const addToCart = (productId: number) => {
-    const count = Number(localStorage.getItem("cartCount") || 0) + 1;
-    localStorage.setItem("cartCount", String(count));
-    window.dispatchEvent(new Event("cart:update"));
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "/login";
+      return;
+    }
+
+    fetch(`${API_BASE_URL}/cart`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ product_id: productId, quantity: 1 }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Unable to add to cart");
+        const count = Number(localStorage.getItem("cartCount") || 0) + 1;
+        localStorage.setItem("cartCount", String(count));
+        window.dispatchEvent(new Event("cart:update"));
+      })
+      .catch(() => window.location.href = "/login");
   };
 
   return (

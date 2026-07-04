@@ -20,6 +20,18 @@ class Token(BaseModel):
     token_type: str
 
 
+class UserOut(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    is_admin: bool = False
+
+    class Config:
+        from_attributes = True
+
+
 class ProductBase(BaseModel):
     name: str
     slug: str

@@ -8,11 +8,14 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
+from dotenv import load_dotenv
 
 from . import models, schemas
 from .database import Base, engine, get_db
 from .excel_import import parse_excel_products
 from .seed import seed_default_data
+
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '..', '.env'))
 
 Base.metadata.create_all(bind=engine)
 
@@ -23,9 +26,11 @@ app = FastAPI(title='Computer Shop API', version='1.0.0')
 def startup_event():
     seed_default_data()
 
+frontend_origins = [origin.strip() for origin in os.getenv('ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000').split(',') if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
+    allow_origins=frontend_origins,
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],
@@ -102,6 +107,11 @@ def login(payload: schemas.UserLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail='Invalid credentials')
     token = create_access_token({'sub': user.email})
     return {'access_token': token, 'token_type': 'bearer'}
+
+
+@app.get('/auth/me', response_model=schemas.UserOut)
+def current_user_profile(current_user: models.User = Depends(get_current_user)):
+    return current_user
 
 
 @app.get('/products', response_model=list[schemas.ProductOut])

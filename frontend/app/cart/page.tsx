@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { API_BASE_URL, getToken } from "../../lib/api";
 
 interface CartItem {
   id: number;
@@ -13,9 +14,12 @@ export default function CartPage() {
   const [address, setAddress] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-    fetch("http://localhost:8000/cart", {
+    const token = getToken();
+    if (!token) {
+      window.location.href = "/login";
+      return;
+    }
+    fetch(`${API_BASE_URL}/cart`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -23,9 +27,13 @@ export default function CartPage() {
   }, []);
 
   const checkout = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-    await fetch("http://localhost:8000/orders", {
+    const token = getToken();
+    if (!token) {
+      window.location.href = "/login";
+      return;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/orders`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -33,6 +41,12 @@ export default function CartPage() {
       },
       body: JSON.stringify({ shipping_address: address }),
     });
+    if (!response.ok) {
+      const body = await response.json();
+      alert(body.detail || "Unable to place order");
+      return;
+    }
+
     localStorage.setItem("cartCount", "0");
     window.dispatchEvent(new Event("cart:update"));
     alert("Order placed successfully");

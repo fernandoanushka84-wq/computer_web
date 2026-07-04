@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { API_BASE_URL, getToken, setToken } from "../../lib/api";
 
 interface Product {
   id?: number;
@@ -27,33 +28,33 @@ export default function AdminPage() {
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [productForm, setProductForm] = useState<Product>({ name: "", slug: "", description: "", price: 0, stock_quantity: 0, image_url: "", category_id: 1, is_featured: false, is_active: true });
   const [categoryForm, setCategoryForm] = useState<Category>({ name: "", description: "" });
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setTokenState] = useState<string | null>(null);
   const [auth, setAuth] = useState({ email: "admin@computerhub.com", password: "Admin@1234" });
   const [editingProductId, setEditingProductId] = useState<number | null>(null);
   const [importFile, setImportFile] = useState<File | null>(null);
 
   const loadProducts = async () => {
-    const response = await fetch("http://localhost:8000/products");
+    const response = await fetch(`${API_BASE_URL}/products`);
     const data = await response.json();
     setProducts(data);
   };
 
   const loadCategories = async () => {
-    const response = await fetch("http://localhost:8000/categories");
+    const response = await fetch(`${API_BASE_URL}/categories`);
     const data = await response.json();
     setCategories(data);
   };
 
   const loadSettings = async () => {
     if (!token) return;
-    const response = await fetch("http://localhost:8000/admin/settings", { headers: { Authorization: `Bearer ${token}` } });
+    const response = await fetch(`${API_BASE_URL}/admin/settings`, { headers: { Authorization: `Bearer ${token}` } });
     const data = await response.json();
     setSettings(data);
   };
 
   useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    if (savedToken) setToken(savedToken);
+    const savedToken = getToken();
+    if (savedToken) setTokenState(savedToken);
     loadProducts();
     loadCategories();
   }, []);
@@ -65,14 +66,14 @@ export default function AdminPage() {
   }, [token]);
 
   const login = async () => {
-    const response = await fetch("http://localhost:8000/auth/login", {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(auth),
     });
     const data = await response.json();
-    localStorage.setItem("token", data.access_token);
     setToken(data.access_token);
+    setTokenState(data.access_token);
     loadProducts();
     loadCategories();
     loadSettings();
@@ -80,7 +81,7 @@ export default function AdminPage() {
 
   const saveProduct = async () => {
     if (!token) return;
-    const url = editingProductId ? `http://localhost:8000/admin/products/${editingProductId}` : "http://localhost:8000/admin/products";
+    const url = editingProductId ? `${API_BASE_URL}/admin/products/${editingProductId}` : `${API_BASE_URL}/admin/products`;
     const method = editingProductId ? "PUT" : "POST";
     const response = await fetch(url, {
       method,
@@ -95,7 +96,7 @@ export default function AdminPage() {
 
   const deleteProduct = async (id: number) => {
     if (!token) return;
-    await fetch(`http://localhost:8000/admin/products/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+    await fetch(`${API_BASE_URL}/admin/products/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
     loadProducts();
   };
 
@@ -111,21 +112,21 @@ export default function AdminPage() {
 
   const saveCategory = async () => {
     if (!token) return;
-    await fetch("http://localhost:8000/admin/categories", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(categoryForm) });
+    await fetch(`${API_BASE_URL}/admin/categories`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(categoryForm) });
     setCategoryForm({ name: "", description: "" });
     loadCategories();
   };
 
   const saveSettings = async () => {
     if (!token) return;
-    await fetch("http://localhost:8000/admin/settings", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(settings) });
+    await fetch(`${API_BASE_URL}/admin/settings`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(settings) });
   };
 
   const uploadExcel = async () => {
     if (!token || !importFile) return;
     const formData = new FormData();
     formData.append("file", importFile);
-    await fetch("http://localhost:8000/admin/products/import", { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData });
+    await fetch(`${API_BASE_URL}/admin/products/import`, { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData });
     setImportFile(null);
     loadProducts();
     loadCategories();
