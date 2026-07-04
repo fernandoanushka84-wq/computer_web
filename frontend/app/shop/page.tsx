@@ -54,8 +54,8 @@ export default function ShopPage() {
       </div>
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {products.map((product) => (
-          <div key={product.id} className="group overflow-hidden rounded-[1.5rem] border border-white/10 bg-slate-900/75 shadow-lg shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-cyan-400/40">
-            <div className="relative h-48 overflow-hidden bg-gradient-to-br from-cyan-500/20 to-fuchsia-500/20 p-4">
+          <div key={product.id} className="group overflow-hidden rounded-3xl border border-white/10 bg-slate-900/75 shadow-lg shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-cyan-400/40">
+            <div className="relative h-48 overflow-hidden bg-linear-to-br from-cyan-500/20 to-fuchsia-500/20 p-4">
               <img src={product.image_url || "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=900&q=80"} alt={product.name} className="h-full w-full rounded-2xl object-cover transition duration-500 group-hover:scale-105" />
             </div>
             <div className="space-y-3 p-6">

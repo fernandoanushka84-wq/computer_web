@@ -1,5 +1,7 @@
 "use client";
 
+"use client";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "./../lib/api";
@@ -87,9 +89,9 @@ export default function Home() {
             <span className="rounded-full border border-white/10 px-3 py-1">Expert support</span>
           </div>
         </div>
-        <div className="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-2xl shadow-slate-200/60 animate-floaty">
-          <img src={heroImages[heroIndex]} alt="computer hardware showcase" className="h-[420px] w-full object-cover transition duration-700" />
-          <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-white/40 to-transparent" />
+        <div className="relative overflow-hidden rounded-4xl border border-slate-200 bg-white shadow-2xl shadow-slate-200/60 animate-floaty">
+          <img src={heroImages[heroIndex]} alt="computer hardware showcase" className="h-105 w-full object-cover transition duration-700" />
+          <div className="absolute inset-0 bg-linear-to-t from-white/80 via-white/40 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6">
             <div className="rounded-2xl border border-slate-200 bg-white p-4 backdrop-blur">
               <p className="text-sm uppercase tracking-[0.3em] text-emerald-700">Featured build</p>
@@ -127,8 +129,8 @@ export default function Home() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {products.slice(0, 6).map((product) => (
-              <div key={product.id} className="group overflow-hidden rounded-[1.5rem] border border-white/10 bg-slate-900/70 shadow-lg shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-cyan-400/40">
-                <div className="relative h-48 overflow-hidden bg-gradient-to-br from-cyan-500/20 to-fuchsia-500/20 p-4">
+              <div key={product.id} className="group overflow-hidden rounded-3xl border border-white/10 bg-slate-900/70 shadow-lg shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-cyan-400/40">
+                <div className="relative h-48 overflow-hidden bg-linear-to-br from-cyan-500/20 to-fuchsia-500/20 p-4">
                   <img src={product.image_url || heroImages[0]} alt={product.name} className="h-full w-full rounded-2xl object-cover transition duration-500 group-hover:scale-105" />
                 </div>
                 <div className="space-y-3 p-6">
@@ -138,7 +140,7 @@ export default function Home() {
                     <span>Stock: {product.stock_quantity}</span>
                     <span className="text-lg font-semibold text-cyan-300">LKR {product.price.toLocaleString()}</span>
                   </div>
-                  <button onClick={() => addToCart(product.id)} className="w-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2 font-semibold text-white transition hover:opacity-90">Add to cart</button>
+                  <button onClick={() => addToCart(product.id)} className="w-full rounded-full bg-linear-to-r from-cyan-500 to-blue-600 px-4 py-2 font-semibold text-white transition hover:opacity-90">Add to cart</button>
                 </div>
               </div>
             ))}
@@ -147,7 +149,7 @@ export default function Home() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
-        <div className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-cyan-500/10 to-fuchsia-500/10 p-8 shadow-2xl shadow-cyan-950/20">
+        <div className="rounded-4xl border border-white/10 bg-linear-to-br from-cyan-500/10 to-fuchsia-500/10 p-8 shadow-2xl shadow-cyan-950/20">
           <div className="mb-6">
             <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Why shoppers choose us</p>
             <h2 className="text-3xl font-semibold text-white">Built for gamers, creators and professionals</h2>
@@ -166,7 +168,7 @@ export default function Home() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="rounded-[2rem] border border-white/10 bg-slate-900/70 p-8">
+        <div className="rounded-4xl border border-white/10 bg-slate-900/70 p-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Social channels</p>

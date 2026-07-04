@@ -59,7 +59,7 @@ export default function CartPage() {
         <h1 className="text-4xl font-bold text-white">Your cart</h1>
         <p className="mt-3 text-slate-400">Secure delivery, fast support and a smooth purchase flow.</p>
       </div>
-      <div className="rounded-[2rem] border border-white/10 bg-slate-900/70 p-6 shadow-2xl shadow-cyan-950/20">
+      <div className="rounded-4xl border border-white/10 bg-slate-900/70 p-6 shadow-2xl shadow-cyan-950/20">
         {items.length === 0 ? (
           <p className="text-slate-300">Your cart is empty. Start shopping from the catalog.</p>
         ) : (

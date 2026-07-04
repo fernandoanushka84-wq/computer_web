@@ -1,5 +1,7 @@
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
+export type ApiResponse<T> = T;
+
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
   return localStorage.getItem("token");
@@ -33,16 +35,21 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
   });
 
   const text = await response.text();
-  let data: any = null;
-  try {
-    data = text ? JSON.parse(text) : null;
-  } catch {
-    data = text;
-  }
+  const data: unknown = parseResponseText(text);
 
   if (!response.ok) {
-    throw new Error(data?.detail || data?.message || response.statusText || "Request failed");
+    const payload = typeof data === "object" && data !== null ? data as Record<string, unknown> : {};
+    const errorMessage = (payload.detail as string | undefined) || (payload.message as string | undefined) || response.statusText || "Request failed";
+    throw new Error(errorMessage);
   }
 
   return data;
+
+  function parseResponseText(value: string): unknown {
+    try {
+      return value ? JSON.parse(value) : null;
+    } catch {
+      return value;
+    }
+  }
 }
